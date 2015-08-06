@@ -85,6 +85,9 @@ echo
 
 ## restore the system using 1 rsync process with exclusion file list
 # cat > /tmp/exclude.txt << "EOF"
+# /etc/network/interfaces
+# /etc/hosts
+# /etc/resolv.conf
 # /boot/grub/grub.cfg
 # /etc/udev
 # /etc/mtab
@@ -111,7 +114,7 @@ echo
 #        "$backupdir/$from_backup/" "/"
 # rm /tmp/exclude.txt
 
-echo -e "\nYou need to modify the following files before restarting:"
+echo -e "\nYou may need to modify the following files before restarting:"
 echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
 echo "  (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
