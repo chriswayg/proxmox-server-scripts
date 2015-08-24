@@ -13,6 +13,7 @@ set -e
 # /udev will cause eth0 to be renamed
 # mtab is dynamic, fstab could have disk UUIDs
 # /etc/issue has Proxmox server IP in it
+# .s3ql data is handled by s3ql itself
 cat > /tmp/exclude.txt << "EOF"
 /boot/grub/grub.cfg
 /etc/udev
