@@ -81,9 +81,12 @@ ls $backupdir/$from_backup
 echo
 
 # restore the system using 10 rsync processes
+# - file exclusions are already handled by the backup script
+# - thus this method should be faster
 /usr/lib/s3ql/pcp.py -a --debug $backupdir/$from_backup/ /
 
 ## restore the system using 1 rsync process with exclusion file list
+# - use this, if you need to exclude additional files
 # cat > /tmp/exclude.txt << "EOF"
 # /etc/network/interfaces
 # /etc/hosts
