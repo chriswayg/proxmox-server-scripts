@@ -46,12 +46,12 @@ incrontab -e
 /usr/share/pve-manager/ext4/ IN_CREATE /etc/incron.scripts/proxmox_noreminder.sh $#
 ```
 
-Test with:
+Test with (in another terminal):
 ```
 tail -f /var/log/syslog | grep incrond
 tail -n 30 -f /var/log/incron.log
 ```
-Reinstalling pve-manager should trigger incrontab
+Reinstalling pve-manager should trigger incron:
 ```
 apt-get install --reinstall pve-manager
 ```
