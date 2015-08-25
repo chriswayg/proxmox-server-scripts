@@ -6,6 +6,9 @@
 # Abort entire script if any command fails
 set -e
 
+# Install s3ql
+apt-get update && apt-get install -y s3ql
+
 # Backup essential networking files
 # - adding a random string to prevent it from being overwritten by rsync
 rand=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)
@@ -43,7 +46,7 @@ mkdir -p /var/log/s3ql
 if ! mountpoint -q "$mountpoint"; then
     echo "mounting $mountpoint"
     # Check and mount file system
-    fsck.s3ql --log /var/log/s3ql/fsck.log --batch --authfile "$AUTHFILE" "$STORAGE_URL"
+    fsck.s3ql --log /var/log/s3ql/fsck.log --authfile "$AUTHFILE" "$STORAGE_URL"
     mount.s3ql --log /var/log/s3ql/mount.log --authfile "$AUTHFILE" "$STORAGE_URL" "$mountpoint"
 fi
 
