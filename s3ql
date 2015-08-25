@@ -29,28 +29,31 @@ case "$1" in
     exec 2>&1
     rm -rf "$DIR"
   
-	if mountpoint -q "$MOUNTPOINT"; then
+    if mountpoint -q "$MOUNTPOINT"; then
         echo "ERROR: $DESC $STORAGE_URL is already mounted on $MOUNTPOINT"
-		exit 1
-	fi
-	echo "Mounting $DESC" "$STORAGE_URL on $MOUNTPOINT"
-	# Check and mount file system
-	fsck.s3ql --batch --log /var/log/s3ql/fsck.log --authfile "$AUTHFILE" "$STORAGE_URL"
-	STA=$?
-	if [ $STA -eq 0 ]; then
+	exit 1
+    fi
+	
+    echo "Mounting $DESC" "$STORAGE_URL on $MOUNTPOINT"
+    # Check and mount file system
+    fsck.s3ql --batch --log /var/log/s3ql/fsck.log --authfile "$AUTHFILE" "$STORAGE_URL"
+    STA=$?
+	
+    if [ $STA -eq 0 ]; then
         echo "successfully checked filesystem"
     else
         echo "ERROR: this is the error code: $STA"
-		exit $STA
-	fi
+	exit $STA
+    fi
 	mount.s3ql --log /var/log/s3ql/mount.log --authfile "$AUTHFILE" "$STORAGE_URL" "$MOUNTPOINT"
 	if [ $STA -eq 0 ]; then
         echo "successfully mounted on $MOUNTPOINT"
     else
         echo "ERROR: this is the error code: $STA"
-		exit $STA
-	fi
-	;;
+	exit $STA
+    fi
+    ;;
+    
   stop)
     # Redirect stdout and stderr into the system log
     DIR=$(mktemp -d)
@@ -60,32 +63,37 @@ case "$1" in
     exec 2>&1
     rm -rf "$DIR"
 
-	if ! mountpoint -q "$MOUNTPOINT"; then
+    if ! mountpoint -q "$MOUNTPOINT"; then
         echo "ERROR: $DESC $STORAGE_URL is currently not mounted on $MOUNTPOINT"
         exit 1
     fi
-	echo "Unmounting $DESC $STORAGE_URL from $MOUNTPOINT"
-        s3qlctrl flushcache "$MOUNTPOINT"
-	    s3qlctrl upload-meta "$MOUNTPOINT"
-        umount.s3ql "$MOUNTPOINT"
-	if [ $? -eq 0 ]; then
+    
+    echo "Unmounting $DESC $STORAGE_URL from $MOUNTPOINT"
+    s3qlctrl flushcache "$MOUNTPOINT"
+    s3qlctrl upload-meta "$MOUNTPOINT"
+    umount.s3ql "$MOUNTPOINT"
+        
+    if [ $? -eq 0 ]; then
         echo "successfully unmounted $MOUNTPOINT"
     else
         echo "ERROR: this is the error code: $STA"
-		exit $STA
-	fi
-	;;
+	exit $STA
+    fi
+    ;;
+    
   status)
-	if ! mountpoint -q "$MOUNTPOINT"; then
+    if ! mountpoint -q "$MOUNTPOINT"; then
         echo "$DESC $STORAGE_URL is currently not mounted on $MOUNTPOINT"
         exit 1
     fi
+    
     echo "Status of $DESC $STORAGE_URL on $MOUNTPOINT"
-	s3qlstat "$MOUNTPOINT"
-	exit "$?"
-	;;
+    s3qlstat "$MOUNTPOINT"
+    exit "$?"
+    ;;
+    
   *)
-	echo "Usage: s3ql {start|stop|status}" >&2
-	exit 3
-	;;
+    echo "Usage: s3ql {start|stop|status}" >&2
+    exit 3
+    ;;
 esac
