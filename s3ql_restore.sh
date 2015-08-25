@@ -1,14 +1,18 @@
 #!/bin/bash
 
-# Restore the whole Proxmox system from a s3ql backup
+# Restore the whole Proxmox system from a s3ql backup to the same system
+# or a system with similar hardware and the same filesystem
 
 # Abort entire script if any command fails
 set -e
 
 # Backup essential networking files
-cp /etc/network/interfaces /etc/network/interfaces.bak
-cp /etc/hosts /etc/hosts.bak
-cp /etc/resolv.conf /etc/resolv.conf.bak
+# - adding a random string to prevent it from being overwritten by rsync
+rand=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)
+cp /etc/network/interfaces /etc/network/interfaces.bak-$rand
+cp /etc/hosts /etc/hosts.bak-$rand
+cp /etc/hostname /etc/hostname.bak-$rand
+cp /etc/resolv.conf /etc/resolv.conf.bak-$rand
 
 # default log location is 
 mkdir -p ~/.s3ql
@@ -91,6 +95,7 @@ echo
 # /etc/network/interfaces
 # /etc/hosts
 # /etc/resolv.conf
+# /etc/hostname
 # /boot/grub/grub.cfg
 # /etc/udev
 # /etc/mtab
@@ -117,9 +122,11 @@ echo
 #        "$backupdir/$from_backup/" "/"
 # rm /tmp/exclude.txt
 
-echo -e "\nYou may need to modify the following files before restarting:"
+echo -e "\nIf you restored Proxmox to a different system,"
+echo "you may need to modify the following files before restarting:"
 echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
 echo "  (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
 echo "* /etc/resolv.conf - DNS"
-echo "* possibly run update-grub"
+echo "* /etc/hostname - be sure to check hostname configuration"
+echo "* possibly run 'update-grub'"
