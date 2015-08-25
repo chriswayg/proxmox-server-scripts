@@ -1,4 +1,4 @@
-# lia-server-scripts
+# proxmox-server-scripts
 Miscellaneous scripts for configuring and administering a Proxmox (Debian) server and VMs
 
  - s3ql: an init script for mounting the s3ql encryped filesystem for use as a storage directory in Proxmox
