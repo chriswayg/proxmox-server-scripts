@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Used for backing up a complete Proxmox server on Debian 7 
+# Used for backing up a complete Proxmox 3.4 server on Debian 7 
 # the VM's (in lib/vz) are backed up separately by Proxmox
 
 # This backup script should be run daily via cron
@@ -11,10 +11,10 @@ set -e
 # Exclude the following from being backed up:
 # grub.cfg has hardware specific UUIDs for the disks
 # /etc/issue has Proxmox server IP in it
-# .s3ql data is handled by s3ql itself
-# /etc/resolv.conf can interrupt rsync
+# resolv.conf can interrupt rsync
 # fstab could have disk UUIDs, mtab is dynamic
-# /udev will cause eth0 to be renamed
+# /udev can cause eth0 to be renamed
+# .s3ql data is handled by s3ql itself
 cat > /tmp/exclude.txt << "EOF"
 /boot/grub/grub.cfg
 /etc/issue
@@ -22,6 +22,7 @@ cat > /tmp/exclude.txt << "EOF"
 /etc/fstab
 /etc/mtab
 /etc/udev
+/root/.s3ql
 /dev
 /proc
 /sys
@@ -33,7 +34,6 @@ cat > /tmp/exclude.txt << "EOF"
 /var/lib/vz/images
 /var/lib/vz/private
 /var/lib/vz/root
-/root/.s3ql
 EOF
 
 # copy some excluded files for later reference
