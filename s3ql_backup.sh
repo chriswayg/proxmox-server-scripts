@@ -10,18 +10,18 @@ set -e
 
 # Exclude the following from being backed up:
 # grub.cfg has hardware specific UUIDs for the disks
-# /udev will cause eth0 to be renamed
-# mtab is dynamic, fstab could have disk UUIDs
 # /etc/issue has Proxmox server IP in it
 # .s3ql data is handled by s3ql itself
 # /etc/resolv.conf can interrupt rsync
+# fstab could have disk UUIDs, mtab is dynamic
+# /udev will cause eth0 to be renamed
 cat > /tmp/exclude.txt << "EOF"
 /boot/grub/grub.cfg
-/etc/udev
-/etc/mtab
-/etc/fstab
 /etc/issue
 /etc/resolv.conf
+/etc/fstab
+/etc/mtab
+/etc/udev
 /dev
 /proc
 /sys
@@ -35,6 +35,12 @@ cat > /tmp/exclude.txt << "EOF"
 /var/lib/vz/root
 /root/.s3ql
 EOF
+
+# copy some excluded files for later reference
+cp /boot/grub/grub.cfg /boot/grub/grub.cfg.restore
+cp /etc/issue /etc/issue.restore
+cp /etc/resolv.conf /etc/resolv.conf.restore
+cp /etc/fstab /etc/fstab.restore
 
 # Backup destination with s3ql filesystem
 mountpoint="/mnt/s3ql"
