@@ -16,7 +16,6 @@ rand=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)
 cp /etc/network/interfaces /etc/network/interfaces.bak-$rand
 cp /etc/hosts /etc/hosts.bak-$rand
 cp /etc/hostname /etc/hostname.bak-$rand
-cp /etc/resolv.conf /etc/resolv.conf.bak-$rand
 
 # default log location is 
 mkdir -p ~/.s3ql
@@ -98,26 +97,9 @@ echo
 # cat > /tmp/exclude.txt << "EOF"
 # /etc/network/interfaces
 # /etc/hosts
-# /etc/resolv.conf
 # /etc/hostname
-# /boot/grub/grub.cfg
-# /etc/udev
-# /etc/mtab
-# /etc/fstab
-# /etc/issue
-# /dev
-# /proc
-# /sys
-# /tmp
-# /run
-# /mnt
-# /media
-# /lost+found
-# /var/lib/vz/images
-# /var/lib/vz/private
-# /var/lib/vz/root
-# /root/.s3ql
 # EOF
+#
 # rsync --archive --hard-links --acls --xattrs --one-file-system \
 #        --partial-dir=.rsync-partial \
 #        --progress --human-readable --stats \
