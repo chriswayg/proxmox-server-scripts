@@ -114,10 +114,10 @@ echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
 echo "  (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hostname - be sure to check hostname configuration"
-echo "* /etc/resolv.conf - DNS"
+echo "* possibly restore /etc/resolv.conf - DNS"
 echo "* possibly run 'update-grub'"
 
-echo -e "\nOverwrite Networking files & hostname now (interfaces, hosts, hostname)? [y/n]"
+echo -e "\nOverwrite networking files & hostname now (interfaces, hosts, hostname)? [y/n]"
 ls $backupdir/$from_backup
     read -n 1 -r
     if ! [[ $REPLY =~ ^[Yy]$ ]]
