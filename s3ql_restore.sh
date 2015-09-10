@@ -11,7 +11,7 @@ rm -v /etc/apt/sources.list.d/pve-enterprise.list
 apt-get update && apt-get install -y s3ql
 
 # Backup essential networking files
-# - adding a random string to prevent it from being overwritten by rsync
+# - adding a random string to prevent it from being overwritten, if running script repeatedly
 rand=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)
 cp /etc/network/interfaces /etc/network/interfaces.bak-$rand
 cp /etc/hosts /etc/hosts.bak-$rand
@@ -113,6 +113,23 @@ echo "you may need to modify the following files before restarting:"
 echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
 echo "  (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
-echo "* /etc/resolv.conf - DNS"
 echo "* /etc/hostname - be sure to check hostname configuration"
+echo "* /etc/resolv.conf - DNS"
 echo "* possibly run 'update-grub'"
+
+echo -e "\nOverwrite Networking files & hostname now (interfaces, hosts, hostname)? [y/n]"
+ls $backupdir/$from_backup
+    read -n 1 -r
+    if ! [[ $REPLY =~ ^[Yy]$ ]]
+    then
+            exit
+    fi
+
+# restore these files    
+cp -v /etc/network/interfaces.restore /etc/network/interfaces
+cp -v /etc/hosts.restore /etc/hosts
+cp -v /etc/hostname.restore /etc/hostname
+hostname -F /etc/hostname
+
+
+
