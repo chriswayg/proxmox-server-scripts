@@ -45,12 +45,15 @@ cp /boot/grub/grub.cfg /boot/grub/grub.cfg.restore
 cp /etc/issue /etc/issue.restore
 cp /etc/resolv.conf /etc/resolv.conf.restore
 cp /etc/fstab /etc/fstab.restore
+cp -R /etc/udev/ /etc/udev.restore/
 
+# copy network related files for optional restore
 cp /etc/network/interfaces /etc/network/interfaces.restore
 cp /etc/hosts /etc/hosts.restore
 cp /etc/hostname /etc/hostname.restore
 
 # Backup destination with s3ql filesystem
+# - authinfo2 needs to be provided and storage already active on S3
 mountpoint="/mnt/s3ql"
 backupdir="$mountpoint/proxmoxfs"
 AUTHFILE="/root/.s3ql/authinfo2"
