@@ -64,7 +64,7 @@ mkdir -p /var/log/s3ql
 # check, if backup filesystem is mounted
 if ! mountpoint -q "$mountpoint"; then
     # clean mountpoint
-    rm -vR $mountpoint/*
+    rm -vfR $mountpoint/*
     # Check and mount file system
     fsck.s3ql --log /var/log/s3ql/fsck.log --batch --authfile "$AUTHFILE" "$STORAGE_URL"
     mount.s3ql --log /var/log/s3ql/mount.log --authfile "$AUTHFILE" "$STORAGE_URL" "$mountpoint"
