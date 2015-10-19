@@ -8,31 +8,35 @@
 # Abort entire script if any command fails
 set -e
 
-# Exclude the following from being backed up:
-# interfaces, hosts & hostname may need to be modified
-# grub.cfg has hardware specific UUIDs for the disks
-# /etc/issue has Proxmox server IP in it
-# resolv.conf can interrupt rsync
-# fstab could have disk UUIDs, mtab is dynamic
-# /udev can cause eth0 to be renamed
-# .s3ql data is handled by s3ql itself
+# Exclude the following from being backed up, because:
+# - /udev/ files can cause eth0 to be renamed
+# - interfaces, hosts & hostname may need to be modified
+# - resolv.conf can interrupt rsync
+# - /etc/issue has Proxmox server IP in it
+# - grub.cfg has hardware specific UUIDs for the disks
+# - fstab could have disk UUIDs, mtab is dynamic
+# - .s3ql data is handled by s3ql itself
+# - /mnt/ contains the /s3ql backup dir
+# - /dev /proc /sys /run are populated at boot
+# - /tmp /media /lost+found does not need to be backed up
+# - lib/vz holding VM's are backed up separately by Proxmox
 cat > /tmp/exclude.txt << "EOF"
+/etc/udev
 /etc/network/interfaces
 /etc/hosts
 /etc/hostname
-/boot/grub/grub.cfg
-/etc/issue
 /etc/resolv.conf
+/etc/issue
+/boot/grub/grub.cfg
 /etc/fstab
 /etc/mtab
-/etc/udev
 /root/.s3ql
+/mnt
 /dev
 /proc
 /sys
-/tmp
 /run
-/mnt
+/tmp
 /media
 /lost+found
 /var/lib/vz/images
