@@ -119,7 +119,6 @@ EOF
 
 echo -e "\n*** Things TO DO after restore:"
 echo "* check and reenable Proxmox Firewall (as it has been disabled)"
-echo "* possibly run 'update-grub'"
 
 echo -e "\n*** The following files were not overwritten, but can be restored manually:"
 echo "- /boot/grub/grub.cfg.restore"
@@ -135,17 +134,34 @@ echo "  (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hostname - be sure to check hostname configuration"
 echo "* These are available for manual or automatic restore here:"
-echo "* /etc/network/interfaces.restore, /etc/hosts.restore, /etc/hostname.restore"
+echo "* /etc/network/interfaces.restore, /etc/hosts.restore, /etc/hostname.restore\n"
 
-echo -e "\nOverwrite networking files & hostname now? [y/n]"
-    read -n 1 -r
-    if ! [[ $REPLY =~ ^[Yy]$ ]]
-    then
-            exit
-    fi
+while true ; do
+    read -p 'Overwrite networking files & hostname now?  (yes/no?): ' answer
+    case "${answer}" in
+        [yY]|[yY][eE][sS]) 
+                # restore these files    
+                cp -v /etc/network/interfaces.restore /etc/network/interfaces
+                cp -v /etc/hosts.restore /etc/hosts
+                cp -v /etc/hostname.restore /etc/hostname
+                hostname -F /etc/hostname
+                break
+                ;;
+            [nN]|[nN][oO]) 
+                break
+                ;;
+    esac
+done
 
-# restore these files    
-cp -v /etc/network/interfaces.restore /etc/network/interfaces
-cp -v /etc/hosts.restore /etc/hosts
-cp -v /etc/hostname.restore /etc/hostname
-hostname -F /etc/hostname
+while true ; do
+    read -p 'Do you want to run 'update-grub' now?  (yes/no?): ' answer
+    case "${answer}" in
+        [yY]|[yY][eE][sS]) 
+                update-grub
+                break
+                ;;
+            [nN]|[nN][oO]) 
+                break
+                ;;
+    esac
+done
