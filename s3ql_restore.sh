@@ -88,6 +88,12 @@ ls $backupdir/$from_backup
     fi
 echo
 
+# disable firewall, as sometimes locked out after restore
+cat >  /etc/pve/firewall/cluster.fw  << "EOF"
+[OPTIONS]
+enable: 0
+EOF
+
 # restore the system using 10 rsync processes
 # - file exclusions are already handled by the backup script
 # - thus this method should be faster
@@ -97,6 +103,7 @@ echo
 # - use this, if you need to exclude additional files
 # - if the s3ql_backup script was used, then exclusions were already applied during backup
 # cat > /tmp/exclude.txt << "EOF"
+# /etc/pve/firewall/cluster.fw
 # /etc/network/interfaces
 # /etc/hosts
 # /etc/hostname
@@ -109,12 +116,6 @@ echo
 #        --exclude-from=/tmp/exclude.txt \
 #        "$backupdir/$from_backup/" "/"
 # rm /tmp/exclude.txt
-
-# disable firewall, as sometimes locked out after restore
-cat >  /etc/pve/firewall/cluster.fw  << "EOF"
-[OPTIONS]
-enable: 0
-EOF
 
 echo -e "\n*** Things TO DO after restore:"
 echo "* check and reenable Proxmox Firewall (as it has been disabled)"
@@ -137,8 +138,6 @@ echo "* These are available for manual or automatic restore here:"
 echo "* /etc/network/interfaces.restore, /etc/hosts.restore, /etc/hostname.restore"
 
 echo -e "\nOverwrite networking files & hostname now? [y/n]"
-
-ls $backupdir/$from_backup
     read -n 1 -r
     if ! [[ $REPLY =~ ^[Yy]$ ]]
     then
