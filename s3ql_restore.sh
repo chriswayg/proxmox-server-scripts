@@ -16,6 +16,7 @@ rand=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)
 cp /etc/network/interfaces /etc/network/interfaces.bak-$rand
 cp /etc/hosts /etc/hosts.bak-$rand
 cp /etc/hostname /etc/hostname.bak-$rand
+cp /etc/resolv.conf /etc/resolv.conf.bak-$rand
 
 # default log location is 
 mkdir -p ~/.s3ql
@@ -94,6 +95,7 @@ echo
 
 ## restore the system using 1 rsync process with exclusion file list
 # - use this, if you need to exclude additional files
+# - if the s3ql_backup script was used, then exclusions were already applied during backup
 # cat > /tmp/exclude.txt << "EOF"
 # /etc/network/interfaces
 # /etc/hosts
@@ -108,14 +110,16 @@ echo
 #        "$backupdir/$from_backup/" "/"
 # rm /tmp/exclude.txt
 
-echo -e "\nIf you restored Proxmox to a different system,"
-echo "you may need to modify the following files before restarting:"
-echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
-echo "  (also inside KVMs utilizing an additional IP)"
-echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
-echo "* /etc/hostname - be sure to check hostname configuration"
-echo "* possibly restore /etc/resolv.conf - DNS"
-echo "* possibly run 'update-grub'"
+echo -e "\n*** Things TO DO after restore ***"
+echo "* check and reenable Proxmox Firewall (as it has been disabled)"
+echo "* check & possibly restore /etc/resolv.conf - DNS settings"
+echo "* check grub.cfg & possibly run 'update-grub'"
+
+# disable firewall, as sometimes locked out after restore
+cat >  /etc/pve/firewall/cluster.fw  << "EOF"
+[OPTIONS]
+enable: 0
+EOF
 
 echo -e "\nOverwrite networking files & hostname now (interfaces, hosts, hostname)? [y/n]"
 ls $backupdir/$from_backup
@@ -131,5 +135,9 @@ cp -v /etc/hosts.restore /etc/hosts
 cp -v /etc/hostname.restore /etc/hostname
 hostname -F /etc/hostname
 
-
-
+echo -e "\nIf you restored Proxmox to a different system,"
+echo "you may need to modify the following files before restarting:"
+echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
+echo "  (also inside KVMs utilizing an additional IP)"
+echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
+echo "* /etc/hostname - be sure to check hostname configuration"
