@@ -10,7 +10,7 @@ set -e
 rm -v /etc/apt/sources.list.d/pve-enterprise.list
 apt-get update && apt-get install -y s3ql
 
-# Backup essential networking files
+# Additional backup of essential networking files
 # - adding a random string to prevent it from being overwritten, if running script repeatedly
 rand=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)
 cp /etc/network/interfaces /etc/network/interfaces.bak-$rand
@@ -110,18 +110,34 @@ echo
 #        "$backupdir/$from_backup/" "/"
 # rm /tmp/exclude.txt
 
-echo -e "\n*** Things TO DO after restore ***"
-echo "* check and reenable Proxmox Firewall (as it has been disabled)"
-echo "* check & possibly restore /etc/resolv.conf - DNS settings"
-echo "* check grub.cfg & possibly run 'update-grub'"
-
 # disable firewall, as sometimes locked out after restore
 cat >  /etc/pve/firewall/cluster.fw  << "EOF"
 [OPTIONS]
 enable: 0
 EOF
 
-echo -e "\nOverwrite networking files & hostname now (interfaces, hosts, hostname)? [y/n]"
+echo -e "\n*** Things TO DO after restore:"
+echo "* check and reenable Proxmox Firewall (as it has been disabled)"
+echo "* possibly run 'update-grub'"
+
+echo -e "\n*** The following files were not overwritten, but can be restored manually:"
+echo "- /boot/grub/grub.cfg.restore"
+echo "- /etc/resolv.conf.restore"
+echo "- /etc/issue.restore"
+echo "- /etc/fstab.restore"
+echo "- /etc/udev.restore"
+
+echo -e "\n*** If you restored Proxmox to a different system,"
+echo "you may need to modify the following files before restarting:"
+echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
+echo "  (also inside KVMs utilizing an additional IP)"
+echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
+echo "* /etc/hostname - be sure to check hostname configuration"
+echo "* These are available for manual or automatic restore here:"
+echo "* /etc/network/interfaces.restore, /etc/hosts.restore, /etc/hostname.restore"
+
+echo -e "\nOverwrite networking files & hostname now? [y/n]"
+
 ls $backupdir/$from_backup
     read -n 1 -r
     if ! [[ $REPLY =~ ^[Yy]$ ]]
@@ -134,10 +150,3 @@ cp -v /etc/network/interfaces.restore /etc/network/interfaces
 cp -v /etc/hosts.restore /etc/hosts
 cp -v /etc/hostname.restore /etc/hostname
 hostname -F /etc/hostname
-
-echo -e "\nIf you restored Proxmox to a different system,"
-echo "you may need to modify the following files before restarting:"
-echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
-echo "  (also inside KVMs utilizing an additional IP)"
-echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
-echo "* /etc/hostname - be sure to check hostname configuration"
