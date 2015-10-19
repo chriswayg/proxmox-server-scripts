@@ -10,6 +10,7 @@ set -e
 
 # Exclude the following from being backed up, because:
 # - /udev/ files can cause eth0 to be renamed
+# - /cluster.fw - we disable firewall during restore
 # - interfaces, hosts & hostname may need to be modified
 # - resolv.conf can interrupt rsync
 # - /etc/issue has Proxmox server IP in it
@@ -22,6 +23,7 @@ set -e
 # - lib/vz holding VM's are backed up separately by Proxmox
 cat > /tmp/exclude.txt << "EOF"
 /etc/udev
+/etc/pve/firewall/cluster.fw
 /etc/network/interfaces
 /etc/hosts
 /etc/hostname
