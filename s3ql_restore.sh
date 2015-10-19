@@ -133,8 +133,8 @@ echo "* /etc/network/interfaces - Main IP, additional IPs, NAT rules"
 echo "  (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hosts - Main IP (also inside KVMs utilizing an additional IP)"
 echo "* /etc/hostname - be sure to check hostname configuration"
-echo "* These are available for manual or automatic restore here:"
-echo "* /etc/network/interfaces.restore, /etc/hosts.restore, /etc/hostname.restore\n"
+echo -e "\n* These are available for manual or automatic restore here:"
+echo -e "* /etc/network/interfaces.restore, /etc/hosts.restore, /etc/hostname.restore\n"
 
 while true ; do
     read -p 'Overwrite networking files & hostname now?  (yes/no?): ' answer
