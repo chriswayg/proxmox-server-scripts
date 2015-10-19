@@ -7,7 +7,7 @@
 set -e
 
 # Install s3ql (pve-enterprise.list causes error during update)
-rm -v /etc/apt/sources.list.d/pve-enterprise.list
+rm -vf /etc/apt/sources.list.d/pve-enterprise.list
 apt-get update && apt-get install -y s3ql
 
 # Additional backup of essential networking files
