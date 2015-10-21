@@ -1,6 +1,6 @@
 #!/bin/bash
 # automatic removal of Proxmox subscription reminder during upgrades
-# - tested with Proxmox 3.4
+# - tested with Proxmox 3.4 and 4.0
 #
 # exit on error
 set -e
@@ -10,7 +10,7 @@ if [ "$1" == "pvemanagerlib.js.dpkg-tmp" ]; then
     echo "$(date +%Y-%m-%d_%H:%M) pvemanagerlib.js has been upgraded - patching file" >> /var/log/incron.log
 
     # wait a bit until the file has its permanent name
-    sleep 5
+    sleep 10
 
     # patch the files
     cp /usr/share/pve-manager/ext4/pvemanagerlib.js /usr/share/pve-manager/ext4/pvemanagerlib.js.bak
