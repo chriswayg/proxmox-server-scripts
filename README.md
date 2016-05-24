@@ -62,6 +62,9 @@ Reinstalling pve-manager should trigger incron:
 apt-get install --reinstall pve-manager
 ```
 
+##### Note:
+Since Proxmox 4.2 the relevant files have been moved from `pve-manager/ext4` to `pve-manager/ext6`. This has not been changed in the script yet.
+
 ###### Disclaimer:
 *The above scripts & patches may have unforeseen consequences and automatic patching could harm your system. Always backup your Proxmox system before applying such changes! Proxmox may change the code at any time, making the patches useless or even counterproductive. Please make sure you understand the code before applying it to your system. Also, IANAL, and in my opinion the above Proxmox patches are permitted under the GPL, but if want to make sure, please consult a copyright lawyer in your jurisdiction. This disclaimer should not be interpreted as legal advice.*
 
