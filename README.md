@@ -40,9 +40,8 @@ echo "root" >> /etc/incron.allow
 
 and copy the script:
 ```
-mkdir -v /etc/incron.scripts
-cp proxmox_noreminder.sh /etc/incron.scripts/proxmox_noreminder.sh
-chmod +x /etc/incron.scripts/proxmox_noreminder.sh
+cp proxmox_noreminder.sh /usr/local/bin/proxmox_noreminder.sh
+chmod +x /usr/local/bin/proxmox_noreminder.sh
 ```
 
 Add the following in incrontab
